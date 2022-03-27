@@ -12,7 +12,7 @@ import servicios.Carrera100;
 
 public class MainCarrera {
 	
-	final static int MAXATLETAS = 4;
+	final static int MAXATLETAS = 2;
 	
 	public static void main(String[] args) {
 		

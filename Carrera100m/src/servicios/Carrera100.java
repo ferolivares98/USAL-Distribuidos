@@ -24,6 +24,7 @@ public class Carrera100 {
 	int nAtletasInscritosListo;
 	long tiempoInicioCarrera;
 	private Map<Integer, Long> tiemposDeLlegada;
+	boolean f = false;
 	
 	/*Semaphore semPreparado;
 	Semaphore semListo;*/
@@ -34,29 +35,33 @@ public class Carrera100 {
 	private CyclicBarrier bp;
 	
 	public Carrera100() {
-		this.nAtletasInscritosPreparado = 0;
+		/*this.nAtletasInscritosPreparado = 0;
 		this.nAtletasInscritosListo = 0;
 		this.tiempoInicioCarrera = 0;
 		this.tiemposDeLlegada = new ConcurrentHashMap<Integer, Long>();
 		/*this.semPreparado = new Semaphore(0);
-		this.semListo = new Semaphore(0);*/
+		this.semListo = new Semaphore(0);
 		this.semMain = new Semaphore(0);
 		bp = new CyclicBarrier(MAXATLETAS);
-		bl = new CyclicBarrier(MAXATLETAS);
+		bl = new CyclicBarrier(MAXATLETAS);*/
 	}
 	
 	@POST
 	@Path("reinicio")
 	public void reinicio() {
-		this.nAtletasInscritosPreparado = 0;
-		this.nAtletasInscritosListo = 0;
-		this.tiempoInicioCarrera = 0;
-		this.tiemposDeLlegada.clear();
-		/*this.semPreparado = new Semaphore(0);
-		this.semListo = new Semaphore(0);*/
-		this.semMain = new Semaphore(0);
-		bp = new CyclicBarrier(MAXATLETAS);
-		bl = new CyclicBarrier(MAXATLETAS);
+		if(!f) {
+			this.nAtletasInscritosPreparado = 0;
+			this.nAtletasInscritosListo = 0;
+			this.tiempoInicioCarrera = 0;
+			//this.tiemposDeLlegada.clear();
+			this.tiemposDeLlegada = new ConcurrentHashMap<Integer, Long>();
+			/*this.semPreparado = new Semaphore(0);
+			this.semListo = new Semaphore(0);*/
+			this.semMain = new Semaphore(0);
+			bp = new CyclicBarrier(MAXATLETAS);
+			bl = new CyclicBarrier(MAXATLETAS);
+			f = true;
+		}
 	}
 	
 	@POST
@@ -64,6 +69,7 @@ public class Carrera100 {
 	public void preparado() {
 		nAtletasInscritosPreparado++;
 		try {
+			System.out.println("en preparados");
 			this.bp.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -77,6 +83,7 @@ public class Carrera100 {
 	public void listo() {
 		nAtletasInscritosListo++;
 		try {
+			System.out.println("en listo");
 			this.bl.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();

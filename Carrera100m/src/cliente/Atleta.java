@@ -3,8 +3,6 @@ package cliente;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
-import servicios.Carrera100;
-
 public class Atleta extends Thread{
 	
 	private int dorsal;
