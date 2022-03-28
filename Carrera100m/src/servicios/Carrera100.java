@@ -20,8 +20,8 @@ import javax.ws.rs.core.MediaType;
 public class Carrera100 {
 
 	final static int MAXATLETAS = 4;
-	int nAtletasInscritosPreparado;
-	int nAtletasInscritosListo;
+	static Integer nAtletasInscritosPreparado;
+	//int nAtletasInscritosListo;
 	long tiempoInicioCarrera;
 	private Map<Integer, Long> tiemposDeLlegada;
 	boolean f = false;
@@ -29,61 +29,71 @@ public class Carrera100 {
 	/*Semaphore semPreparado;
 	Semaphore semListo;*/
 	Semaphore semMain;
+	Semaphore semDorsal;
 	
 	//CyclicBarrier (FORO)
 	private CyclicBarrier bl;
 	private CyclicBarrier bp;
 	
 	public Carrera100() {
-		/*this.nAtletasInscritosPreparado = 0;
-		this.nAtletasInscritosListo = 0;
+		nAtletasInscritosPreparado = 0;
+		//this.nAtletasInscritosListo = 0;
 		this.tiempoInicioCarrera = 0;
 		this.tiemposDeLlegada = new ConcurrentHashMap<Integer, Long>();
 		/*this.semPreparado = new Semaphore(0);
-		this.semListo = new Semaphore(0);
+		this.semListo = new Semaphore(0);*/
 		this.semMain = new Semaphore(0);
+		this.semDorsal = new Semaphore(1);
 		bp = new CyclicBarrier(MAXATLETAS);
-		bl = new CyclicBarrier(MAXATLETAS);*/
+		bl = new CyclicBarrier(MAXATLETAS);
 	}
 	
 	@POST
 	@Path("reinicio")
 	public void reinicio() {
-		if(!f) {
-			this.nAtletasInscritosPreparado = 0;
-			this.nAtletasInscritosListo = 0;
-			this.tiempoInicioCarrera = 0;
-			//this.tiemposDeLlegada.clear();
-			this.tiemposDeLlegada = new ConcurrentHashMap<Integer, Long>();
-			/*this.semPreparado = new Semaphore(0);
-			this.semListo = new Semaphore(0);*/
-			this.semMain = new Semaphore(0);
-			bp = new CyclicBarrier(MAXATLETAS);
-			bl = new CyclicBarrier(MAXATLETAS);
-			f = true;
-		}
+		nAtletasInscritosPreparado = 0;
+		//this.nAtletasInscritosListo = 0;
+		this.tiempoInicioCarrera = 0;
+		this.tiemposDeLlegada.clear();
+		/*this.semPreparado = new Semaphore(0);
+		this.semListo = new Semaphore(0);*/
+		this.semMain = new Semaphore(0);
+		this.semDorsal = new Semaphore(1);
+		bp = new CyclicBarrier(MAXATLETAS);
+		bl = new CyclicBarrier(MAXATLETAS);
 	}
 	
-	@POST
+	/*@POST
+	@Path("preparado")*/
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
 	@Path("preparado")
-	public void preparado() {
-		nAtletasInscritosPreparado++;
+	public String preparado() {
+		Integer dorsal = 0;
 		try {
-			System.out.println("en preparados");
+			this.semDorsal.acquire();
+			dorsal = nAtletasInscritosPreparado;
+			nAtletasInscritosPreparado++;
+			this.semDorsal.release();
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		
+		try {
 			this.bp.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (BrokenBarrierException e) {
 			e.printStackTrace();
 		}
+		return dorsal.toString();
 	}
 	
 	@POST
 	@Path("listo")
 	public void listo() {
-		nAtletasInscritosListo++;
+		//nAtletasInscritosListo++;
 		try {
-			System.out.println("en listo");
 			this.bl.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();

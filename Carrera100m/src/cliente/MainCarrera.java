@@ -12,7 +12,7 @@ import servicios.Carrera100;
 
 public class MainCarrera {
 	
-	final static int MAXATLETAS = 2;
+	final static int MAXATLETAS = 3;
 	
 	public static void main(String[] args) {
 		
@@ -20,18 +20,28 @@ public class MainCarrera {
 		URI uri = UriBuilder.fromUri("http://localhost:8080/Carrera100m/rest").build();
 		WebTarget target = client.target(uri);
 		
-		Carrera100 c = new Carrera100();
-		target.path("carrera100/reinicio").request().post(null);
+		/* args[0] = Ordenador servidor+clientes*/
+		
+		boolean isServ = Boolean.parseBoolean(args[0]);
+		
+		System.out.println(isServ);
+		
+		if (isServ) {
+			Carrera100 c = new Carrera100();
+			target.path("carrera100/reinicio").request().post(null);
+		}
 		Atleta[] at = new Atleta[MAXATLETAS];
 		for(int i = 0; i < MAXATLETAS; i++) {
-			at[i] = new Atleta(i, target);
+			at[i] = new Atleta(target);
 		}
 		
 		for(Atleta a : at) {
 			a.start();
 		}
 		
-		String res = target.path("carrera100/resultados").request(MediaType.TEXT_PLAIN).get(String.class);
-		System.out.println(res);
+		if(isServ) {
+			String res = target.path("carrera100/resultados").request(MediaType.TEXT_PLAIN).get(String.class);
+			System.out.println(res);
+		}
 	}
 }

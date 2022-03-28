@@ -10,16 +10,17 @@ public class Atleta extends Thread{
 	private final static int MIN = 9560;
 	private final static int MAX = 11760;
 
-	public Atleta(int dorsal, WebTarget target) {
+	public Atleta(WebTarget target) {
 		super();
-		this.dorsal = dorsal;
+		this.dorsal = 0;
 		this.target = target;
 	}
 	
 	@Override
 	public void run() {
 		try {
-			target.path("carrera100/preparado").request().post(null);
+			String d = target.path("carrera100/preparado").request(MediaType.TEXT_PLAIN).get(String.class);
+			dorsal = Integer.parseInt(d);
 			target.path("carrera100/listo").request().post(null);
 			Thread.sleep((long) ((Math.random() * (MAX - MIN)) + MIN));
 			target.path("carrera100/llegada").queryParam("dorsal", dorsal).request(MediaType.TEXT_PLAIN).get(String.class);
