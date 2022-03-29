@@ -12,7 +12,7 @@ import servicios.Carrera100;
 
 public class MainCarrera {
 	
-	final static int MAXATLETAS = 3;
+	final static int MAXATLETAS = 2;
 	
 	public static void main(String[] args) {
 		
@@ -20,7 +20,7 @@ public class MainCarrera {
 		URI uri = UriBuilder.fromUri("http://localhost:8080/Carrera100m/rest").build();
 		WebTarget target = client.target(uri);
 		
-		/* args[0] = Ordenador servidor+clientes*/
+		/* args[0] = Ordenador servidor+clientes. true en los argumentos si = servidor (acceso a reinicio y resultados)*/
 		
 		boolean isServ = Boolean.parseBoolean(args[0]);
 		
