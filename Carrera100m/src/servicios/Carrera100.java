@@ -70,6 +70,8 @@ public class Carrera100 {
 	@Path("preparado")
 	public String preparado() {
 		Integer dorsal = 0;
+		// "Inscripción" (reparto de dorsales) por parte de los atletas. 
+		// Implementación ligeramente distinta a la expuesta en el enunciado.
 		try {
 			this.semDorsal.acquire();
 			dorsal = nAtletasInscritosPreparado;
